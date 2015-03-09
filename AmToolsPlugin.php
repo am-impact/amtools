@@ -3,24 +3,29 @@ namespace Craft;
 
 class AmToolsPlugin extends BasePlugin
 {
-    function getName()
+    public function getName()
     {
          return 'a&m Tools';
     }
 
-    function getVersion()
+    public function getVersion()
     {
-        return '1.1.1';
+        return '1.2';
     }
 
-    function getDeveloper()
+    public function getDeveloper()
     {
         return 'a&m impact';
     }
 
-    function getDeveloperUrl()
+    public function getDeveloperUrl()
     {
         return 'http://www.am-impact.nl';
+    }
+
+    public function init()
+    {
+        craft()->amTools_imageOptim->registerEvents();
     }
 
     public function addTwigExtension()
