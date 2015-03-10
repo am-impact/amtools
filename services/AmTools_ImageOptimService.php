@@ -60,8 +60,9 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 		return $imageOptim->optimise();
 	}
 
-	private function optimizeImage($imageToOptimize)
+	public function optimizeImage($imageToOptimize)
 	{
+		$this->setToolAvailability();
 		Craft::import('plugins.amtools.libraries.PHPImageOptim.PHPImageOptim', true);
 		Craft::import('plugins.amtools.libraries.PHPImageOptim.Tools.Common', true);
 		Craft::import('plugins.amtools.libraries.PHPImageOptim.Tools.ToolsInterface', true);
@@ -89,8 +90,7 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 	{
 		// Update pages in a navigation if an Entry was saved
         craft()->on('assets.onBeforeUploadAsset', function(Event $event) {
-        	$this->setToolAvailability();
-        	return $this->optimizeImage($event->params['path']);
+		return craft()->amTools_imageOptim->optimizeImage($event->params['path']);
         });
 	}
 }
