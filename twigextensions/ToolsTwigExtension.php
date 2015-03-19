@@ -21,8 +21,16 @@ class ToolsTwigExtension extends \Twig_Extension
             'array_exclude' => new Twig_Filter_Method($this, 'getExcludedArray'),
             'get_class' => new Twig_Filter_Function('get_class'),
             'ksort' => new Twig_Filter_Method($this, 'custom_ksort'),
-            'method_exists' => new Twig_Filter_Function('method_exists')
+            'method_exists' => new Twig_Filter_Function('method_exists'),
+            'print_r' => new Twig_Filter_Method($this, 'print_r')
         );
+    }
+
+    public function print_r($var)
+    {
+        echo '<pre>';
+        print_r($var);
+        echo '</pre>';
     }
 
     /**
