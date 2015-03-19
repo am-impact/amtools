@@ -37,4 +37,9 @@ class AmToolsService extends BaseApplicationComponent
         });
         return $results;
 	}
+
+	public function sendAccessControlAllowOrigin($val)
+	{
+		header("Access-Control-Allow-Origin: " . $val);
+	}
 }

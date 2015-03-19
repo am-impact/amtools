@@ -12,4 +12,9 @@ class AmToolsVariable
 	{
 		return craft()->amTools->mergeAndOrderByDate($arrays);
 	}
+
+	public function sendAccessControlAllowOrigin($val = "*")
+	{
+		return craft()->amTools->sendAccessControlAllowOrigin($val);
+	}
 }
