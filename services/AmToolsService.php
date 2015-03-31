@@ -22,7 +22,7 @@ class AmToolsService extends BaseApplicationComponent
 			foreach ($array['data'] as $item) {
 				if (isset($item[$key])) {
 					// Do I need to convert the DateTime?
-					$resultsKey = $item[$key] instanceof DateTime ? strtotime($item[$key]->nice()) : $item[$key];
+					$resultsKey = $item[$key] instanceof DateTime ? strtotime($item[$key]->mySqlDateTime()) : $item[$key];
 					$results[] = array(
 						'date' => $resultsKey,
 						'data' => $item
