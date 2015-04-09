@@ -69,7 +69,7 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
     	$imageOptim = new \PHPImageOptim\PHPImageOptim();
     	$imageOptim->setImage($imageToOptimize);
 
-    	switch(pathinfo($imageToOptimize, PATHINFO_EXTENSION))
+    	switch(strtolower(pathinfo($imageToOptimize, PATHINFO_EXTENSION)))
     	{
     		case 'gif':
     			return $this->optimizeGif($imageOptim);
