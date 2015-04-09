@@ -17,4 +17,9 @@ class AmToolsVariable
 	{
 		return craft()->amTools->sendAccessControlAllowOrigin($val);
 	}
+
+	public function getLocalImageUrl($url, $options = array())
+	{
+		return craft()->amTools_externalImage->getLocalImageUrl($url, $options);
+	}
 }
