@@ -111,6 +111,12 @@ class AmTools_ExternalImageService extends BaseApplicationComponent
 		$generatedPath .= $parts['host'] . DIRECTORY_SEPARATOR;
 		$pathParts = explode('/', $parts['path']);
 		$numPathParts = count($pathParts);
+		$extension = substr(strrchr($pathParts[$numPathParts - 1], "."), 1);
+
+		if (! ImageHelper::isImageManipulatable($extension))
+		{
+			return false;
+		}
 
 		for ($i = 0; $i < $numPathParts - 1; $i++)
 		{
@@ -121,7 +127,6 @@ class AmTools_ExternalImageService extends BaseApplicationComponent
 		}
 
 		$generatedPath .= $this->getOptionsDir() . DIRECTORY_SEPARATOR;
-
 		$this->prepareDir($generatedPath);
 		return $generatedPath . $pathParts[$numPathParts - 1];
 	}
