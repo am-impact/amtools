@@ -41,10 +41,22 @@ class AmTools_ExternalImageService extends BaseApplicationComponent
 		if ($localImageOnDisk && !file_exists($localImageOnDisk))
 		{
 			$this->tempImg = $this->getTempImage();
-			$this->applyOptions();
-			$this->tempImg->saveAs($localImageOnDisk);
-			craft()->amTools_imageOptim->optimizeImage($localImageOnDisk);
-			unlink($this->tempImgPath);
+			if($this->tempImg)
+			{
+				$this->applyOptions();
+				$this->tempImg->saveAs($localImageOnDisk);
+				craft()->amTools_imageOptim->optimizeImage($localImageOnDisk);
+				unlink($this->tempImgPath);
+			}
+			else
+			{
+				return false;
+			}
+		}
+
+		if (!$localImageOnDisk)
+		{
+			return false;
 		}
 
 		return $this->convertToUrl($localImageOnDisk);
@@ -57,8 +69,21 @@ class AmTools_ExternalImageService extends BaseApplicationComponent
 	 */
 	private function getTempImage()
 	{
-		$this->tempImgPath = $this->tempDir . DIRECTORY_SEPARATOR . uniqid('remoteImg_');
-		file_put_contents($this->tempImgPath, file_get_contents($this->url));
+		while(empty($this->tempImgPath) || file_exists($this->tempImgPath))
+		{
+			$this->tempImgPath = $this->tempDir . DIRECTORY_SEPARATOR . uniqid('remoteImg_');
+		}
+
+		$file = @file_get_contents($this->url);
+
+		if ($file !== false)
+		{
+			file_put_contents($this->tempImgPath, $file);
+		}
+		else
+		{
+			return false;
+		}
 
 		$image = new Image();
 		return $image->loadImage($this->tempImgPath);
