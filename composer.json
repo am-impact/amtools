@@ -1,0 +1,14 @@
+{
+    "name": "am-impact/amtools",
+    "description": "General Craft tools",
+    "authors": [
+        {
+            "name": "Hubert Prein",
+            "email": "h.prein@am-impact.nl"
+        }
+    ],
+    "type": "craft-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
