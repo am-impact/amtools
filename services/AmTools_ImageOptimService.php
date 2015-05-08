@@ -74,9 +74,9 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
     		case 'gif':
     			return $this->optimizeGif($imageOptim);
     		break;
-    		case 'png':
-    			return $this->optimizePng($imageOptim);
-    		break;
+    		// case 'png':
+    		// 	return $this->optimizePng($imageOptim);
+    		// break;
     		case 'jpg':
     		case 'jpeg':
     			return $this->optimizeJpeg($imageOptim);
