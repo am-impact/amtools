@@ -9,10 +9,10 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 	{
 		foreach ($this->tools as $tool => $val)
 		{
-        	if ($location = shell_exec('which ' . $tool))
-        	{
-        		$this->tools[$tool] = trim($location);
-        	}
+			if ($location = shell_exec('which ' . $tool))
+			{
+				$this->tools[$tool] = trim($location);
+			}
 		}
 	}
 
@@ -54,7 +54,7 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 
 	private function optimizePng($imageOptim)
 	{
-		$tools = array('advpng' => 'AdvPng', 'optipng' => 'OptiPng', 'pngcrush' => 'PngCrush', 'pngout' => 'PngOut', 'pngquant' => 'PngQuant');
+		$tools = array('pngcrush' => 'PngCrush');
 		$this->optimizeBase('Png', $tools, $imageOptim);
 
 		return $imageOptim->optimise();
@@ -88,9 +88,9 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 			case 'gif':
 				return $this->optimizeGif($imageOptim);
 			break;
-			// case 'png':
-			// 	return $this->optimizePng($imageOptim);
-			// break;
+			case 'png':
+				return $this->optimizePng($imageOptim);
+			break;
 			case 'jpg':
 			case 'jpeg':
 				return $this->optimizeJpeg($imageOptim);
