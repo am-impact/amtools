@@ -60,37 +60,56 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 		return $imageOptim->optimise();
 	}
 
+	public function getAssetPath(AssetFileModel $asset)
+	{
+		$assetSourceFolder = $asset->folder->source->getAttributes();
+		$path = craft()->templates->renderObjectTemplate($assetSourceFolder['settings']['path'], craft()->config->get('environmentVariables'));
+		if ($asset->folder->getAttributes()['path'] != '')
+		{
+			$path .= $asset->folder->getAttributes()['path'];
+		}
+
+		$path .= $asset->filename;
+
+		return $path;
+	}
+
 	public function optimizeImage($imageToOptimize)
 	{
 		$this->setToolAvailability();
 		Craft::import('plugins.amtools.libraries.PHPImageOptim.PHPImageOptim', true);
 		Craft::import('plugins.amtools.libraries.PHPImageOptim.Tools.Common', true);
 		Craft::import('plugins.amtools.libraries.PHPImageOptim.Tools.ToolsInterface', true);
-    	$imageOptim = new \PHPImageOptim\PHPImageOptim();
-    	$imageOptim->setImage($imageToOptimize);
+		$imageOptim = new \PHPImageOptim\PHPImageOptim();
+		$imageOptim->setImage($imageToOptimize);
 
-    	switch(strtolower(pathinfo($imageToOptimize, PATHINFO_EXTENSION)))
-    	{
-    		case 'gif':
-    			return $this->optimizeGif($imageOptim);
-    		break;
-    		// case 'png':
-    		// 	return $this->optimizePng($imageOptim);
-    		// break;
-    		case 'jpg':
-    		case 'jpeg':
-    			return $this->optimizeJpeg($imageOptim);
-    		break;
-    	}
+		switch(strtolower(pathinfo($imageToOptimize, PATHINFO_EXTENSION)))
+		{
+			case 'gif':
+				return $this->optimizeGif($imageOptim);
+			break;
+			// case 'png':
+			// 	return $this->optimizePng($imageOptim);
+			// break;
+			case 'jpg':
+			case 'jpeg':
+				return $this->optimizeJpeg($imageOptim);
+			break;
+		}
 
-    	return false;
+		return false;
 	}
 
 	public function registerEvents()
 	{
-		// Update pages in a navigation if an Entry was saved
-        craft()->on('assets.onBeforeUploadAsset', function(Event $event) {
-		return craft()->amTools_imageOptim->optimizeImage($event->params['path']);
-        });
+		// Start task when an asset gets saved
+		craft()->on('assets.onSaveAsset', function(Event $event) {
+			$asset = $event->params['asset'];
+
+			if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
+			{
+				craft()->tasks->createTask('AmTools_ImageOptim', 'Optimizing asset: ' . $asset->filename, array('asset' => $asset));
+			}
+		});
 	}
 }
