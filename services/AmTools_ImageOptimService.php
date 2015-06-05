@@ -103,13 +103,18 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 	public function registerEvents()
 	{
 		// Start task when an asset gets saved
-		craft()->on('assets.onSaveAsset', function(Event $event) {
-			$asset = $event->params['asset'];
+		$events = array('assets.onSaveAsset', 'assets.onReplaceFile');
 
-			if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
-			{
-				craft()->tasks->createTask('AmTools_ImageOptim', 'Optimizing asset: ' . $asset->filename, array('asset' => $asset));
-			}
-		});
+		foreach ($events as $event)
+		{
+			craft()->on($event, function(Event $event) {
+				$asset = $event->params['asset'];
+
+				if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
+				{
+					craft()->tasks->createTask('AmTools_ImageOptim', 'Optimizing asset: ' . $asset->filename, array('asset' => $asset));
+				}
+			});
+		}
 	}
 }

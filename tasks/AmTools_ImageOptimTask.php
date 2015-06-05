@@ -14,9 +14,10 @@ class AmTools_ImageOptimTask extends BaseTask
     protected function defineSettings()
     {
         return array(
-        	'asset' => AttributeType::Mixed
+            'asset' => AttributeType::Mixed
         );
     }
+
     /**
      * Returns the default description for this task.
      *
@@ -36,6 +37,7 @@ class AmTools_ImageOptimTask extends BaseTask
     {
         return 1;
     }
+
     /**
      * Runs a task step.
      *
@@ -44,16 +46,21 @@ class AmTools_ImageOptimTask extends BaseTask
      */
     public function runStep($step)
     {
-    	$asset = $this->getSettings()->asset;
+        $asset = $this->getSettings()->asset;
 
-    	if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
-    	{
-    		$path = craft()->amTools_imageOptim->getAssetPath($asset);
-    		if (file_exists($path))
-    		{
-    			return craft()->amTools_imageOptim->optimizeImage($path);
-    		}
-    	}
+        if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
+        {
+            $path = craft()->amTools_imageOptim->getAssetPath($asset);
+            if (file_exists($path))
+            {
+                return craft()->amTools_imageOptim->optimizeImage($path);
+            }
+            else
+            {
+                return true;
+            }
+        }
 
+        return false;
     }
 }
