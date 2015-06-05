@@ -54,7 +54,7 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 
 	private function optimizePng($imageOptim)
 	{
-		$tools = array('pngcrush' => 'PngCrush');
+		$tools = array('optipng' => 'OptiPng');
 		$this->optimizeBase('Png', $tools, $imageOptim);
 
 		return $imageOptim->optimise();
