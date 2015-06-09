@@ -42,4 +42,40 @@ class AmToolsService extends BaseApplicationComponent
 	{
 		header("Access-Control-Allow-Origin: " . $val);
 	}
+
+	/**
+     * Get header images for an Entry.
+     *
+     * @param mixed $entry
+     *
+     * @return mixed
+     */
+    public function getHeaderImages($entry = null)
+    {
+        // Try to find the matching entry if we don't have one
+        if (! $entry) {
+            $entry = craft()->urlManager->getMatchedElement();
+        }
+
+        // Do we have an Entry?
+        if (! $entry || ! $entry instanceof EntryModel) {
+            return false;
+        }
+
+        // Find header images
+        $criteria = craft()->elements->getCriteria(ElementType::MatrixBlock);
+        $criteria->relatedTo = $entry;
+        $criteria->locale = $entry->locale;
+        $matrixBlocks = $criteria->ids();
+
+        if ($matrixBlocks) {
+            $criteria = craft()->elements->getCriteria(ElementType::Asset);
+            $criteria->relatedTo = $matrixBlocks;
+            $assets = $criteria->find();
+
+            return $assets;
+        }
+
+        return false;
+    }
 }

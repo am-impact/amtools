@@ -22,4 +22,9 @@ class AmToolsVariable
 	{
 		return craft()->amTools_externalImage->getLocalImageUrl($url, $options);
 	}
+
+	public function getHeaderImages($entry = null)
+	{
+		return craft()->amTools->getHeaderImages($entry);
+	}
 }
