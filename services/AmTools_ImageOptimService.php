@@ -64,9 +64,10 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 	{
 		$assetSourceFolder = $asset->folder->source->getAttributes();
 		$path = craft()->templates->renderObjectTemplate($assetSourceFolder['settings']['path'], craft()->config->get('environmentVariables'));
-		if ($asset->folder->getAttributes()['path'] != '')
+		$folderAttributes = $asset->folder->getAttributes();
+		if ($folderAttributes['path'] != '')
 		{
-			$path .= $asset->folder->getAttributes()['path'];
+			$path .= $folderAttributes['path'];
 		}
 
 		$path .= $asset->filename;
@@ -118,3 +119,4 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 		}
 	}
 }
+
