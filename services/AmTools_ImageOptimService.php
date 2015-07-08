@@ -113,7 +113,11 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 
 				if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
 				{
-					craft()->tasks->createTask('AmTools_ImageOptim', 'Optimizing asset: ' . $asset->filename, array('asset' => $asset));
+					$path = craft()->amTools_imageOptim->getAssetPath($asset);
+					if (!empty($path) && in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), array('gif', 'png', 'jpg', 'jpeg')))
+					{
+						craft()->tasks->createTask('AmTools_ImageOptim', 'Optimizing asset: ' . $asset->filename, array('asset' => $asset));
+					}
 				}
 			});
 		}
