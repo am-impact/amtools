@@ -22,8 +22,66 @@ class ToolsTwigExtension extends \Twig_Extension
             'get_class' => new Twig_Filter_Function('get_class'),
             'ksort' => new Twig_Filter_Method($this, 'custom_ksort'),
             'method_exists' => new Twig_Filter_Function('method_exists'),
-            'print_r' => new Twig_Filter_Method($this, 'print_r')
+            'print_r' => new Twig_Filter_Method($this, 'print_r'),
+            'email_encode' => new Twig_Filter_Method($this, 'emailEncode')
         );
+    }
+
+    /**
+     * Encode an email address.
+     *
+     * @return string
+     */
+    public function emailEncode($emailAddress, $params = array())
+    {
+        // Is it a valid email address?
+        if (! filter_var($emailAddress, FILTER_VALIDATE_EMAIL)) {
+            return $emailAddress;
+        }
+
+        $character_set = '+-.0123456789@ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz';
+
+        $id = 'e'.rand(1,999999999);
+        $key = str_shuffle($character_set);
+        $cipher_text = '';
+
+        for ($i = 0; $i < strlen($emailAddress); $i += 1) {
+            $cipher_text .= $key[ strpos($character_set,$emailAddress[$i]) ];
+        }
+
+        $script = 'var a="'.$key.'";var b=a.split("").sort().join("");var c="'.$cipher_text.'";var d="";';
+
+        $script.= 'for(var e=0;e<c.length;e++)d+=b.charAt(a.indexOf(c.charAt(e)));';
+
+        if (isset($params['link']) && $params['link'] === true) {
+            // Unset link
+            unset($params['link']);
+
+            // Set attributes
+            $attributes = array();
+            foreach ($params as $key => $value) {
+                $attributes[] = sprintf('%s=\\"%s\\"',
+                    $key,
+                    $value
+                );
+            }
+
+            // Add other params as attributes
+            $script.= sprintf('document.getElementById("'.$id.'").innerHTML="<a href=\\"mailto:"+d+"\\"%s>"+d+"</a>"',
+                count($attributes) ? ' ' . implode(' ', $attributes) : ''
+            );
+        }
+        else {
+            $script.= 'document.getElementById("'.$id.'").innerHTML=""+d+""';
+        }
+
+        $script = "eval(\"".str_replace(array("\\",'"'),array("\\\\",'\"'), $script)."\")";
+
+        $script = '<script type="text/javascript">/*<![CDATA[*/'.$script.'/*]]>*/</script>';
+
+        $html = '<span id="'.$id.'">[javascript protected email address]</span>'.$script;
+
+        return new \Twig_Markup($html, craft()->templates->getTwig()->getCharset());
     }
 
     public function print_r($var)
@@ -265,5 +323,11 @@ class ToolsTwigExtension extends \Twig_Extension
             $r[$keys[$i]] = $arr[$keys[$i]];
         }
         return $r;
+    }
+
+    private function _encodeEmail($e) {
+        $output = '';
+        for ($i = 0; $i < strlen($e); $i++) { $output .= '&#'.ord($e[$i]).';'; }
+        return $output;
     }
 }
