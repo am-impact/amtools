@@ -25,7 +25,10 @@ class AmToolsPlugin extends BasePlugin
 
     public function init()
     {
-        craft()->amTools_imageOptim->registerEvents();
+        if (craft()->request->isCpRequest())
+        {
+            craft()->amTools_imageOptim->registerEvents();
+        }
     }
 
     public function addTwigExtension()
