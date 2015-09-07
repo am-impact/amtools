@@ -53,7 +53,7 @@ class ToolsTwigExtension extends \Twig_Extension
 
         $script.= 'for(var e=0;e<c.length;e++)d+=b.charAt(a.indexOf(c.charAt(e)));';
 
-        if (isset($params['label']) && !empty($params['label'])) {
+        if (!empty($params['label'])) {
             $script.= 'f="'.$params['label'].'";';
             // Unset label
             unset($params['label']);
