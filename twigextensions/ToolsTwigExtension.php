@@ -49,9 +49,18 @@ class ToolsTwigExtension extends \Twig_Extension
             $cipher_text .= $key[ strpos($character_set,$emailAddress[$i]) ];
         }
 
-        $script = 'var a="'.$key.'";var b=a.split("").sort().join("");var c="'.$cipher_text.'";var d="";';
+        $script = 'var a="'.$key.'";var b=a.split("").sort().join("");var c="'.$cipher_text.'";var d="";var f="";';
 
         $script.= 'for(var e=0;e<c.length;e++)d+=b.charAt(a.indexOf(c.charAt(e)));';
+
+        if (isset($params['label']) && !empty($params['label'])) {
+            $script.= 'f="'.$params['label'].'";';
+            // Unset label
+            unset($params['label']);
+        }
+        else {
+            $script.= 'f=d;';
+        }
 
         if (isset($params['link']) && $params['link'] === true) {
             // Unset link
@@ -67,7 +76,7 @@ class ToolsTwigExtension extends \Twig_Extension
             }
 
             // Add other params as attributes
-            $script.= sprintf('document.getElementById("'.$id.'").innerHTML="<a href=\\"mailto:"+d+"\\"%s>"+d+"</a>"',
+            $script.= sprintf('document.getElementById("'.$id.'").innerHTML="<a href=\\"mailto:"+d+"\\"%s>"+f+"</a>"',
                 count($attributes) ? ' ' . implode(' ', $attributes) : ''
             );
         }
