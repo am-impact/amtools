@@ -45,4 +45,9 @@ class AmTools_ErrorsService extends BaseApplicationComponent
     	catch (ErrorException $e) {
     	}
     }
+
+    public function send404Header()
+    {
+        header("HTTP/1.0 404 Not Found");
+    }
 }

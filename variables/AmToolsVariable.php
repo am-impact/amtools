@@ -27,4 +27,9 @@ class AmToolsVariable
 	{
 		return craft()->amTools->getHeaderImages($entry);
 	}
+
+	public function send404Header()
+	{
+		craft()->amTools_errors->send404Header();
+	}
 }
