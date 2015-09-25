@@ -32,4 +32,17 @@ class AmToolsVariable
 	{
 		craft()->amTools_errors->send404Header();
 	}
+
+	/**
+	 * Create an image with possible filter.
+	 *
+	 * @param AssetModel $asset
+	 * @param array      $params
+	 *
+	 * @return bool|string
+	 */
+	public function getImageUrl($asset, $params = array())
+	{
+		return craft()->amTools_imageFilter->image($asset, $params);
+	}
 }

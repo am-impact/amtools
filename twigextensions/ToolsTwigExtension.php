@@ -23,8 +23,22 @@ class ToolsTwigExtension extends \Twig_Extension
             'ksort' => new Twig_Filter_Method($this, 'custom_ksort'),
             'method_exists' => new Twig_Filter_Function('method_exists'),
             'print_r' => new Twig_Filter_Method($this, 'print_r'),
-            'email_encode' => new Twig_Filter_Method($this, 'emailEncode')
+            'email_encode' => new Twig_Filter_Method($this, 'emailEncode'),
+            'imagefilter' => new Twig_Filter_Method($this, 'imageFilter')
         );
+    }
+
+    /**
+     * Create an image with possible filter.
+     *
+     * @param AssetModel $asset
+     * @param array      $params
+     *
+     * @return bool|string
+     */
+    public function imageFilter($asset, $params = array())
+    {
+        return craft()->amTools_imageFilter->image($asset, $params);
     }
 
     /**
