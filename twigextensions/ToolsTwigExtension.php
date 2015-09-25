@@ -16,7 +16,7 @@ class ToolsTwigExtension extends \Twig_Extension
     {
         return array(
             'array_rand' => new Twig_Filter_Method($this, 'arrayRand'),
-            'pretty_date' => new Twig_Filter_Method($this, 'getprettyDate'),
+            'pretty_date' => new Twig_Filter_Method($this, 'getPrettyDate'),
             'youtube_id' => new Twig_Filter_Method($this, 'getYoutubeIdFromUrl'),
             'array_exclude' => new Twig_Filter_Method($this, 'getExcludedArray'),
             'get_class' => new Twig_Filter_Function('get_class'),
@@ -189,7 +189,7 @@ class ToolsTwigExtension extends \Twig_Extension
                 $vars['time'] = floor($diff / 3600);
                 $vars['timeType'] = $vars['hours'];
             }
-            return Craft::t('prettyDateFormat', $vars);
+            return Craft::t('{time} {timeType} {ago}', $vars);
         }
         elseif ($dayDiff == 1)
         {
@@ -199,32 +199,32 @@ class ToolsTwigExtension extends \Twig_Extension
         {
             $vars['time'] = $dayDiff;
             $vars['timeType'] = $vars['days'];
-            return Craft::t('prettyDateFormat', $vars);
+            return Craft::t('{time} {timeType} {ago}', $vars);
         }
         elseif ($dayDiff == 7)
         {
             $vars['time'] = 1;
             $vars['timeType'] = $vars['week'];
-            return Craft::t('prettyDateFormat', $vars);
+            return Craft::t('{time} {timeType} {ago}', $vars);
         }
         elseif ($dayDiff < (7 * 6))
         {
             $vars['time'] = ceil($dayDiff / 7);
             $vars['timeType'] = $vars['weeks'];
-            return Craft::t('prettyDateFormat', $vars);
+            return Craft::t('{time} {timeType} {ago}', $vars);
         }
         elseif ($dayDiff < 365)
         {
             $vars['time'] = ceil($dayDiff / (365 / 12));
             $vars['timeType'] = $vars['months'];
-            return Craft::t('prettyDateFormat', $vars);
+            return Craft::t('{time} {timeType} {ago}', $vars);
         }
         else
         {
             $years = round($dayDiff / 365);
             $vars['time'] = $years;
             $vars['timeType'] != 1 ? $vars['years'] : $vars['year'];
-            return Craft::t('prettyDateFormat', $vars);
+            return Craft::t('{time} {timeType} {ago}', $vars);
         }
     }
 

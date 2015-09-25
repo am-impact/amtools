@@ -2,6 +2,6 @@
 return array(
 	'ago' => 'geleden',
 	'Just now' => 'Zojuist',
-	'prettyDateFormat' => '{time} {timeType} {ago}',
+	'{time} {timeType} {ago}' => '{time} {timeType} {ago}',
 	'Yesterday' => 'Gisteren'
 );
