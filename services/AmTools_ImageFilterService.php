@@ -137,7 +137,7 @@ class AmTools_ImageFilterService extends BaseApplicationComponent
                         if (strpos($folderEffectName, '_colorize') === false) {
                             $folderEffectName .= '_colorize';
                         }
-                        $folderEffectName .= substr($filter['color'], 1);
+                        $folderEffectName .= '_' . substr($filter['color'], 1);
                     }
                     break;
 
