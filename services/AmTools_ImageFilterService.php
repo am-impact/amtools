@@ -15,14 +15,14 @@ class AmTools_ImageFilterService extends BaseApplicationComponent
         'jpeg'
     );
     private $_defaultParams = array(
-        'filter' => 'fullColor',
+        'filters' => 'fullColor',
         'quality' => 100,
         'mode' => 'crop',
         'position' => 'center-center'
     );
 
     /**
-     * Create an image with a possible filter.
+     * Create an image with a possible filters.
      *
      * @param AssetFileModel $asset
      * @param array          $params
@@ -39,13 +39,13 @@ class AmTools_ImageFilterService extends BaseApplicationComponent
             return false;
         }
 
-        // Update filter params and validate them
-        $filterParams = array_merge($this->_defaultParams, $params);
-        if (! isset($filterParams['width']) || ! isset($filterParams['height'])) {
+        // Update image params and validate them
+        $imageParams = array_merge($this->_defaultParams, $params);
+        if (! isset($imageParams['width']) || ! isset($imageParams['height'])) {
             return false;
         }
-        if (! is_array($filterParams['filter']) || ! is_numeric(key($filterParams['filter']))) {
-            $filterParams['filter'] = array($filterParams['filter']);
+        if (! is_array($imageParams['filters']) || ! is_numeric(key($imageParams['filters']))) {
+            $imageParams['filters'] = array($imageParams['filters']);
         }
 
         // Do we know the source folder path?
@@ -59,17 +59,17 @@ class AmTools_ImageFilterService extends BaseApplicationComponent
         $this->_path  = $this->_imageFolders[ $asset->sourceId ]['path'];
 
         // Transform!
-        return $this->_createFilterTransform($filterParams);
+        return $this->_createImageTransform($imageParams);
     }
 
     /**
-     * Create a filter transform for an image.
+     * Create an image transform.
      *
      * @param array $params
      *
      * @return string
      */
-    private function _createFilterTransform($params)
+    private function _createImageTransform($params)
     {
         $storeFolder = $this->_getStoreFolder($params);
 
@@ -94,7 +94,7 @@ class AmTools_ImageFilterService extends BaseApplicationComponent
         }
 
         // Effect on image?
-        $this->_addImageEffects($params['filter']);
+        $this->_addImageEffects($params['filters']);
 
         // Store the image!
         $this->_image->save($this->_path . $storeFolder . $this->_asset->filename, array('jpeg_quality' => $params['quality'], 'flatten' => true));
@@ -114,7 +114,7 @@ class AmTools_ImageFilterService extends BaseApplicationComponent
     {
         // Effect on image?
         $folderEffectName = '';
-        foreach ($params['filter'] as $filter) {
+        foreach ($params['filters'] as $filter) {
             $actualFilter = $filter;
             if (is_array($filter)) {
                 if (isset($filter['effect'])) {
