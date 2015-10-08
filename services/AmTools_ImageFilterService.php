@@ -49,14 +49,20 @@ class AmTools_ImageFilterService extends BaseApplicationComponent
         }
 
         // Do we know the source folder path?
-        if (! isset($this->_imageFolders[ $asset->sourceId ])) {
-            $assetSource = $asset->getSource();
-            $this->_imageFolders[ $asset->sourceId ] = $assetSource->settings;
+        if (! isset($this->_imageFolders[ $asset->folderId ])) {
+            $assetFolder = craft()->assets->getFolderById($asset->folderId);
+            $assetSource = $assetFolder->getSource();
+            $assetSettings = $assetSource->settings;
+            if ($assetFolder->path) {
+                $assetSettings['url'] = $assetSettings['url'] . $assetFolder->path;
+                $assetSettings['path'] = $assetSettings['path'] . $assetFolder->path;
+            }
+            $this->_imageFolders[ $asset->folderId ] = $assetSettings;
         }
 
         $this->_asset = $asset;
-        $this->_url   = $this->_imageFolders[ $asset->sourceId ]['url'];
-        $this->_path  = $this->_imageFolders[ $asset->sourceId ]['path'];
+        $this->_url   = craft()->config->parseEnvironmentString($this->_imageFolders[ $asset->folderId ]['url']);
+        $this->_path  = craft()->config->parseEnvironmentString($this->_imageFolders[ $asset->folderId ]['path']);
 
         // Transform!
         return $this->_createImageTransform($imageParams);
