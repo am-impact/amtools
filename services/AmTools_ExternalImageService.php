@@ -104,7 +104,7 @@ class AmTools_ExternalImageService extends BaseApplicationComponent
 	 *
 	 * @return string
 	 */
-	private function generateLocalFilePath()
+	private function generateLocalFilePath($prepareDir = true)
 	{
 		$generatedPath = $this->localExternalImagePath;
 		$parts = parse_url($this->url);
@@ -127,7 +127,11 @@ class AmTools_ExternalImageService extends BaseApplicationComponent
 		}
 
 		$generatedPath .= $this->getOptionsDir() . DIRECTORY_SEPARATOR;
-		$this->prepareDir($generatedPath);
+
+		if ($prepareDir)
+		{
+			$this->prepareDir($generatedPath);
+		}
 		return $generatedPath . $pathParts[$numPathParts - 1];
 	}
 
@@ -197,5 +201,92 @@ class AmTools_ExternalImageService extends BaseApplicationComponent
 	private function prepareDir($dir)
 	{
 		return (!is_dir($dir)) ? mkdir($dir, 0777, true) : true;
+	}
+
+	public function cleanup($externalUrls = array())
+	{
+		if (!is_array($externalUrls))
+		{
+			$externalUrls = array($externalUrls);
+		}
+
+		foreach ($externalUrls as $externalUrl)
+		{
+			$this->url = $externalUrl;
+			$this->options = array();
+
+			$this->normalizeOptions();
+			$localImageOnDisk = $this->generateLocalFilePath(false);
+			$parts = explode('/', $localImageOnDisk);
+			$numPathParts = count($parts);
+			$fileToCleanup = $parts[$numPathParts-1];
+			unset($parts[$numPathParts - 1]);
+			unset($parts[$numPathParts - 2]);
+			$transformationsDir = implode('/', $parts);
+			$cleanupNeeded = is_dir($transformationsDir);
+
+			if ($cleanupNeeded)
+			{
+				$ignore = "/(^(([\.]){1,2})$|(\.(svn|git|md))|(Thumbs\.db|\.DS_STORE))$/iu";
+				$removeParent = true;
+				foreach (scandir($transformationsDir) as $file)
+				{
+					preg_match($ignore, $file, $skip);
+
+					if (!$skip)
+					{
+						if (is_dir($transformationsDir . '/' . $file))
+						{
+							$transformationDir = $transformationsDir . '/' . $file;
+							$removeParent2 = true;
+
+							foreach (scandir($transformationDir) as $file2)
+							{
+								preg_match($ignore, $file2, $skip2);
+
+								if (!$skip2)
+								{
+									if ($file2 == $fileToCleanup)
+									{
+										unlink(realpath($transformationDir . '/' . $file2));
+									}
+									else
+									{
+										$removeParent = false;
+										$removeParent2 = false;
+									}
+								}
+							}
+
+							if ($removeParent2)
+							{
+								$this->_delTree(realpath($transformationDir));
+							}
+						}
+					}
+				}
+
+				if ($removeParent)
+				{
+					$this->_delTree(realpath($transformationsDir));
+				}
+			}
+		}
+	}
+
+	private function _delTree($dir)
+	{
+		if (strpos($dir, realpath($this->localExternalImagePath)) !== false)
+		{
+			$files = array_diff(scandir($dir), array('.', '..'));
+
+			foreach ($files as $file)
+			{
+				(is_dir("$dir/$file")) ? $this->_delTree("$dir/$file") : unlink("$dir/$file");
+			}
+			return rmdir($dir);
+		}
+
+		return false;
 	}
 }
