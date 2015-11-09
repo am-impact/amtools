@@ -150,6 +150,9 @@ class ToolsTwigExtension extends \Twig_Extension
      */
     public function getPrettyDate($date)
     {
+        if (! is_numeric($date)) {
+            $date = strtotime($date);
+        }
         $timeStamp            = (int) $date;
         $compareToTimestamp   = (int) time();
         $diff                 = $compareToTimestamp - $timeStamp;
@@ -237,7 +240,7 @@ class ToolsTwigExtension extends \Twig_Extension
         {
             $years = round($dayDiff / 365);
             $vars['time'] = $years;
-            $vars['timeType'] != 1 ? $vars['years'] : $vars['year'];
+            $vars['timeType'] = $years != 1 ? $vars['years'] : $vars['year'];
             return Craft::t('{time} {timeType} {ago}', $vars);
         }
     }
