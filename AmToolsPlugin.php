@@ -29,6 +29,8 @@ class AmToolsPlugin extends BasePlugin
         {
             craft()->amTools_imageOptim->registerEvents();
         }
+
+	craft()->amTools_errors->initErrorHandler();
     }
 
     public function addTwigExtension()
