@@ -38,10 +38,6 @@ class AmTools_ErrorsService extends BaseApplicationComponent
 			'session' => $_SESSION,
 			'request' => $_REQUEST
 		));
-		$email = new EmailModel();
-		$email->body = nl2br(print_r($error, 1));
-		$email->subject = "Fout in Craft opgetreden op " . $_SERVER["SERVER_NAME"];
-		$email->toEmail = 'onderhoud@am-impact.nl';
 		mail(craft()->config->get('testToEmailAddress') != '' ? craft()->config->get('testToEmailAddress') : 'onderhoud@am-impact.nl', "Fout in Craft opgetreden op " . $_SERVER["SERVER_NAME"], print_r($error, 1));
 	}
 }
