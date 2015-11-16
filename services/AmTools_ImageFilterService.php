@@ -30,7 +30,7 @@ class AmTools_ImageFilterService extends BaseApplicationComponent
     public function image($asset, $params = array())
     {
         // We require an AssetFileModel
-        if (! $asset instanceof AssetFileModel) {
+        if (! $asset instanceof AssetFileModel && !isset($asset->filename, $asset->folderId)) {
             return false;
         }
 
