@@ -24,7 +24,8 @@ class ToolsTwigExtension extends \Twig_Extension
             'method_exists' => new Twig_Filter_Function('method_exists'),
             'print_r' => new Twig_Filter_Method($this, 'print_r'),
             'email_encode' => new Twig_Filter_Method($this, 'emailEncode'),
-            'image_url' => new Twig_Filter_Method($this, 'imageUrl')
+            'image_url' => new Twig_Filter_Method($this, 'imageUrl'),
+            'parse_url' => new Twig_Filter_Method($this, 'parseUrl')
         );
     }
 
@@ -39,6 +40,18 @@ class ToolsTwigExtension extends \Twig_Extension
     public function imageUrl($asset, $params = array())
     {
         return craft()->amTools_imageFilter->image($asset, $params);
+    }
+
+    /**
+     * Parse a url with the standard parse_url function.
+     *
+     * @param string $url
+     *
+     * @return bool|array
+     */
+    public function parseUrl($url)
+    {
+		return parse_url($url);
     }
 
     /**
