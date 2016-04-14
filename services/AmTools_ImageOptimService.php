@@ -4,7 +4,7 @@ namespace Craft;
 class AmTools_ImageOptimService extends BaseApplicationComponent
 {
 	private $tools = array('gifsicle' => false, 'jpegoptim' => false, 'jpegtran' => false, 'advpng' => false, 'optipng' => false, 'pngcrush' => false, 'pngquant' => false, 'pngout' => false);
-	
+
 	public function setToolAvailability()
 	{
 		foreach ($this->tools as $tool => $val)

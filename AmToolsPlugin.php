@@ -10,7 +10,7 @@ class AmToolsPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.3.2';
+        return '1.3.3';
     }
 
     public function getDeveloper()
@@ -25,6 +25,7 @@ class AmToolsPlugin extends BasePlugin
 
     public function init()
     {
+        craft()->amTools_errors->initErrorHandler();
         if (craft()->request->isCpRequest())
         {
             craft()->amTools_imageOptim->registerEvents();
