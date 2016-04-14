@@ -15,7 +15,7 @@ class AmTools_ErrorsService extends BaseApplicationComponent
 
 			if ($msg['message'] != '')
 			{
-				$this->sendErrorMail($msg);
+				AmTools_ErrorsService::sendErrorMail($msg);
 			}
 		};
 		\Yii::app()->onError = function($errorEvent)
@@ -27,11 +27,11 @@ class AmTools_ErrorsService extends BaseApplicationComponent
 				'line' => $errorEvent->line
 			);
 
-			$this->sendErrorMail($msg);
+			AmTools_ErrorsService::sendErrorMail($msg);
 		};
 	}
 
-	private function sendErrorMail($error)
+	public function sendErrorMail($error)
 	{
 		$error = array_merge($error, array(
 			'server' => $_SERVER,
