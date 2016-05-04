@@ -40,4 +40,9 @@ class AmTools_ErrorsService extends BaseApplicationComponent
 		));
 		mail(craft()->config->get('testToEmailAddress') != '' ? craft()->config->get('testToEmailAddress') : 'onderhoud@am-impact.nl', "Fout in Craft opgetreden op " . $_SERVER["SERVER_NAME"], print_r($error, 1));
 	}
+
+	public function send404Header()
+    {
+        header("HTTP/1.0 404 Not Found");
+    }
 }
