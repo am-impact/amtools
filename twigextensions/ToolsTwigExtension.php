@@ -25,7 +25,8 @@ class ToolsTwigExtension extends \Twig_Extension
             'print_r' => new Twig_Filter_Method($this, 'print_r'),
             'email_encode' => new Twig_Filter_Method($this, 'emailEncode'),
             'image_url' => new Twig_Filter_Method($this, 'imageUrl'),
-            'parse_url' => new Twig_Filter_Method($this, 'parseUrl')
+            'parse_url' => new Twig_Filter_Method($this, 'parseUrl'),
+            'insert_item_at_index' => new Twig_Filter_Method($this, 'insertItemAtIndex')
         );
     }
 
@@ -40,6 +41,20 @@ class ToolsTwigExtension extends \Twig_Extension
     public function imageUrl($asset, $params = array())
     {
         return craft()->amTools_imageFilter->image($asset, $params);
+    }
+
+    public function insertItemAtIndex($array, $params = array())
+    {
+        if (!empty($params['item'])) {
+            $inserted = $params['item'];
+        }
+
+        if (!empty($params['position'])) {
+            $index = $params['position'];
+        }
+
+        array_splice($array, $index, 0, $inserted);
+        return $array;
     }
 
     /**
