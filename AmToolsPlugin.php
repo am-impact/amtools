@@ -23,6 +23,13 @@ class AmToolsPlugin extends BasePlugin
         return 'http://www.am-impact.nl';
     }
 
+    public function getSettingsHtml()
+    {
+        return craft()->templates->render('amtools/settings', array(
+            'settings' => $this->getSettings()
+        ));
+    }
+
     public function init()
     {
         craft()->amTools_errors->initErrorHandler();
@@ -37,5 +44,13 @@ class AmToolsPlugin extends BasePlugin
         Craft::import('plugins.amtools.twigextensions.ToolsTwigExtension');
 
         return new ToolsTwigExtension();
+    }
+
+    protected function defineSettings()
+    {
+        return array(
+            'useServerImageOptim' => array(AttributeType::Bool, 'default' => false),
+            'useImagickImageOptim' => array(AttributeType::Bool, 'default' => false),
+        );
     }
 }

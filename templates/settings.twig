@@ -1,0 +1,16 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.lightswitchField({
+    id: 'useServerImageOptim',
+    name: 'useServerImageOptim',
+    label: 'Gebruiker server afbeelding optimalisatie'|t,
+    on: settings.useServerImageOptim,
+    instructions: 'Uitgebreide, tragere optimalisatie via PHPImageOptim.'|t
+}) }}
+{{ forms.lightswitchField({
+    id: 'useImagickImageOptim',
+    name: 'useImagickImageOptim',
+    label: 'Gebruiker Imagick afbeelding optimalisatie'|t,
+    on: settings.useImagickImageOptim,
+    instructions: 'Simpele optimalisatie via Imagick.'|t
+}) }}

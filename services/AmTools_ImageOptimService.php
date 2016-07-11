@@ -3,7 +3,17 @@ namespace Craft;
 
 class AmTools_ImageOptimService extends BaseApplicationComponent
 {
+	private $_settings = null;
 	private $tools = array('gifsicle' => false, 'jpegoptim' => false, 'jpegtran' => false, 'advpng' => false, 'optipng' => false, 'pngcrush' => false, 'pngquant' => false, 'pngout' => false);
+
+	public function init()
+	{
+		// Get plugin settings
+		$plugin = craft()->plugins->getPlugin('amtools');
+		if ($plugin) {
+			$this->_settings = $plugin->getSettings();
+		}
+	}
 
 	public function setToolAvailability()
 	{
@@ -77,50 +87,67 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 
 	public function optimizeImage($imageToOptimize)
 	{
-		$this->setToolAvailability();
-		Craft::import('plugins.amtools.libraries.PHPImageOptim.PHPImageOptim', true);
-		Craft::import('plugins.amtools.libraries.PHPImageOptim.Tools.Common', true);
-		Craft::import('plugins.amtools.libraries.PHPImageOptim.Tools.ToolsInterface', true);
-		$imageOptim = new \PHPImageOptim\PHPImageOptim();
-		$imageOptim->setImage($imageToOptimize);
+		if ($this->_settings && $this->_settings->useServerImageOptim) {
+			$this->setToolAvailability();
+			Craft::import('plugins.amtools.libraries.PHPImageOptim.PHPImageOptim', true);
+			Craft::import('plugins.amtools.libraries.PHPImageOptim.Tools.Common', true);
+			Craft::import('plugins.amtools.libraries.PHPImageOptim.Tools.ToolsInterface', true);
+			$imageOptim = new \PHPImageOptim\PHPImageOptim();
+			$imageOptim->setImage($imageToOptimize);
 
-		switch(strtolower(pathinfo($imageToOptimize, PATHINFO_EXTENSION)))
-		{
-			case 'gif':
-				return $this->optimizeGif($imageOptim);
-			break;
-			case 'png':
-				return $this->optimizePng($imageOptim);
-			break;
-			case 'jpg':
-			case 'jpeg':
-				return $this->optimizeJpeg($imageOptim);
-			break;
+			switch(strtolower(pathinfo($imageToOptimize, PATHINFO_EXTENSION)))
+			{
+				case 'gif':
+					return $this->optimizeGif($imageOptim);
+				break;
+				case 'png':
+					return $this->optimizePng($imageOptim);
+				break;
+				case 'jpg':
+				case 'jpeg':
+					return $this->optimizeJpeg($imageOptim);
+				break;
+			}
+		}
+		elseif ($this->_settings && $this->_settings->useImagickImageOptim) {
+			return $this->_optimizeAsset($imageToOptimize);
 		}
 
-		return false;
+		return true;
 	}
 
 	public function registerEvents()
 	{
-		// Start task when an asset gets saved
-		$events = array('assets.onSaveAsset', 'assets.onReplaceFile');
+		// Only perform optimisation when activated
+		if ($this->_settings && ($this->_settings->useServerImageOptim || $this->_settings->useImagickImageOptim)) {
+			// Start task when an asset gets saved
+			$events = array('assets.onSaveAsset', 'assets.onReplaceFile');
+			foreach ($events as $event)
+			{
+				craft()->on($event, function(Event $event) {
+					$asset = $event->params['asset'];
 
-		foreach ($events as $event)
-		{
-			craft()->on($event, function(Event $event) {
-				$asset = $event->params['asset'];
-
-				if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
-				{
-					$path = craft()->amTools_imageOptim->getAssetPath($asset);
-					if (!empty($path) && in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), array('gif', 'png', 'jpg', 'jpeg')))
+					if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
 					{
-						craft()->tasks->createTask('AmTools_ImageOptim', 'Optimizing asset: ' . $asset->filename, array('asset' => $asset));
+						$path = craft()->amTools_imageOptim->getAssetPath($asset);
+						if (!empty($path) && in_array(strtolower(pathinfo($path, PATHINFO_EXTENSION)), array('gif', 'png', 'jpg', 'jpeg'))) {
+							craft()->tasks->createTask('AmTools_ImageOptim', 'Optimizing asset: ' . $asset->filename, array('asset' => $asset->id));
+						}
 					}
-				}
-			});
+				});
+			}
 		}
+	}
+
+	private function _optimizeAsset($imageToOptimize)
+	{
+		$image = new \Imagick();
+		$image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+		$image->setImageResolution(300,300);
+		$image->readImage($imageToOptimize);
+		$success = $image->writeImage();
+
+		return $success;
 	}
 }
 

@@ -46,21 +46,16 @@ class AmTools_ImageOptimTask extends BaseTask
      */
     public function runStep($step)
     {
-        $asset = $this->getSettings()->asset;
+        $asset = craft()->assets->getFileById($this->getSettings()->asset);
 
-        if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel'))
-        {
+        if (!empty($asset) && is_a($asset, 'Craft\\AssetFileModel')) {
             $path = craft()->amTools_imageOptim->getAssetPath($asset);
-            if (file_exists($path))
-            {
+
+            if (file_exists($path)) {
                 return craft()->amTools_imageOptim->optimizeImage($path);
-            }
-            else
-            {
-                return true;
             }
         }
 
-        return false;
+        return true;
     }
 }
