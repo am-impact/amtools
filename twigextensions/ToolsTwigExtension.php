@@ -7,8 +7,13 @@ use Twig_Filter_Function;
 
 class ToolsTwigExtension extends \Twig_Extension
 {
-    protected $fileCache = [];
+    protected $fileCache = array();
     protected $environmentVariables;
+
+    public function __construct()
+    {
+        $this->environmentVariables = craft()->config->get('environmentVariables');
+    }
 
     public function getName()
     {
@@ -39,7 +44,7 @@ class ToolsTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'gruntCacheBust'   => new \Twig_SimpleFunction('gruntCacheBust', [$this, 'gruntCacheBust'])
+            'gruntCacheBust'   => new \Twig_SimpleFunction('gruntCacheBust', array($this, 'gruntCacheBust'))
         );
     }
 
@@ -50,7 +55,6 @@ class ToolsTwigExtension extends \Twig_Extension
      */
     public function gruntCacheBust($jsonFile, $sourceFile)
     {
-        $this->environmentVariables = craft()->config->get('environmentVariables');
         $jsonFile = $this->_getFileContents($jsonFile);
         $map = json_decode($jsonFile, true);
 
