@@ -7,6 +7,9 @@ use Twig_Filter_Function;
 
 class ToolsTwigExtension extends \Twig_Extension
 {
+    protected $fileCache = [];
+    protected $environmentVariables;
+
     public function getName()
     {
         return 'Tools';
@@ -28,6 +31,32 @@ class ToolsTwigExtension extends \Twig_Extension
             'parse_url' => new Twig_Filter_Method($this, 'parseUrl'),
             'insert_item_at_index' => new Twig_Filter_Method($this, 'insertItemAtIndex')
         );
+    }
+
+    /**
+     * @return array
+     */
+    public function getFunctions()
+    {
+        return array(
+            'gruntCacheBust'   => new \Twig_SimpleFunction('gruntCacheBust', [$this, 'gruntCacheBust'])
+        );
+    }
+
+    /**
+     * @param string $jsonFile
+     * @param string $cssFile
+     * @return string
+     */
+    public function gruntCacheBust($jsonFile, $sourceFile)
+    {
+        $this->environmentVariables = craft()->config->get('environmentVariables');
+        $jsonFile = $this->_getFileContents($jsonFile);
+        $map = json_decode($jsonFile, true);
+
+        $pad = isset($map[$sourceFile]) ? $map[$sourceFile] : $sourceFile;
+
+        return $this->environmentVariables['submap'] . $pad;
     }
 
     /**
@@ -383,5 +412,17 @@ class ToolsTwigExtension extends \Twig_Extension
         $output = '';
         for ($i = 0; $i < strlen($e); $i++) { $output .= '&#'.ord($e[$i]).';'; }
         return $output;
+    }
+
+    /**
+     * @param string $file
+     * @return string
+     */
+    private function _getFileContents($file)
+    {
+        if (! isset($this->fileCache[$file])) {
+            $this->fileCache[$file] = file_get_contents($file);
+        }
+        return $this->fileCache[$file];
     }
 }
