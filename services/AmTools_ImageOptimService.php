@@ -1,5 +1,6 @@
 <?php
 namespace Craft;
+use \Imagick;
 
 class AmTools_ImageOptimService extends BaseApplicationComponent
 {
@@ -141,10 +142,13 @@ class AmTools_ImageOptimService extends BaseApplicationComponent
 
 	private function _optimizeAsset($imageToOptimize)
 	{
-		$image = new \Imagick();
-		$image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
-		$image->setImageResolution(300,300);
+		$image = new Imagick();
+		$image->setResolution(72,72);
 		$image->readImage($imageToOptimize);
+		$image->stripimage();
+		$image->setImageUnits(imagick::RESOLUTION_PIXELSPERINCH);
+		$image->setImageResolution(72,72);
+		$image->resampleImage(72,72,imagick::FILTER_UNDEFINED,0);
 		$success = $image->writeImage();
 
 		return $success;
