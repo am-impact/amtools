@@ -1,6 +1,7 @@
 # amtools
 
-# Cachebust (from v1.4.0)
+# v1.4.0
+## Cachebust
 **Samples**
 ```
 <link rel="stylesheet" href="{{ gruntCacheBust('grunt-cache-bust.json', 'resources/css/all.css') }}">
@@ -8,7 +9,11 @@
 <script src="{{ gruntCacheBust('grunt-cache-bust.json', 'resources/scripts/all.min.js') }}"></script>
 ```
 
-# Image filters (from v1.3.0)
+## Imageoptim
+Resolution uploaded images to 72ppi with Imagick
+
+# v1.3.0
+## Image filters
 **Possible effects**:
 - blur
 - colorize
