@@ -55,9 +55,12 @@ class ToolsTwigExtension extends \Twig_Extension
      */
     public function gruntCacheBust($jsonFile, $sourceFile)
     {
-        $jsonFile = $this->_getFileContents($jsonFile);
-        $map = json_decode($jsonFile, true);
+        $jsonFile = $this->_getFileContents( $this->environmentVariables['fileSystemPath'] . $jsonFile );
+        if( !$jsonFile ) {
+            return $this->environmentVariables['submap'] . $sourceFile;
+        }
 
+        $map = json_decode($jsonFile, true);
         $pad = isset($map[$sourceFile]) ? $map[$sourceFile] : $sourceFile;
 
         return $this->environmentVariables['submap'] . $pad;
@@ -424,6 +427,10 @@ class ToolsTwigExtension extends \Twig_Extension
      */
     private function _getFileContents($file)
     {
+        if(! file_exists($file) ) {
+            return false;
+        }
+
         if (! isset($this->fileCache[$file])) {
             $this->fileCache[$file] = file_get_contents($file);
         }
