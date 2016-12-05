@@ -34,11 +34,11 @@ class AmTools_ErrorsService extends BaseApplicationComponent
 	public function sendErrorMail($error)
 	{
 		$error = array_merge($error, array(
-			'server' => $_SERVER,
-			'session' => $_SESSION,
-			'request' => $_REQUEST
+			'server' => $_SERVER ?? '',
+			'session' => $_SESSION ?? '',
+			'request' => $_REQUEST ?? ''
 		));
-		mail(craft()->config->get('testToEmailAddress') != '' ? craft()->config->get('testToEmailAddress') : 'onderhoud@am-impact.nl', "Fout in Craft opgetreden op " . $_SERVER["SERVER_NAME"], print_r($error, 1));
+		mail(craft()->config->get('testToEmailAddress') != '' ? craft()->config->get('testToEmailAddress') : 'onderhoud@am-impact.nl', "Fout in Craft opgetreden op " . ($_SERVER["SERVER_NAME"] ?? 'onbekend'), print_r($error, 1));
 	}
 
 	public function send404Header()
