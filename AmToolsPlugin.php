@@ -50,7 +50,7 @@ class AmToolsPlugin extends BasePlugin
     {
         return array(
             'useServerImageOptim' => array(AttributeType::Bool, 'default' => false),
-            'useImagickImageOptim' => array(AttributeType::Bool, 'default' => false),
+            'useImagickImageOptim' => array(AttributeType::Bool, 'default' => true),
         );
     }
 }
