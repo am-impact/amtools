@@ -14,3 +14,8 @@
     on: settings.useImagickImageOptim,
     instructions: 'Simpele optimalisatie via Imagick.'|t
 }) }}
+
+Action url for task that resaves all elements of one or more specified types: {{ actionUrl('amTools/resaveElements') }}<br>
+Param: elementTypes<br>
+Options(remove the ones you don't want to use from your url): Asset,User,Entry,MaxtrixBlock,AmSocialPlatform_Group<br>
+ex: {{ actionUrl('amTools/resaveElements', {'elementTypes': 'Asset,Entry'}) }}
