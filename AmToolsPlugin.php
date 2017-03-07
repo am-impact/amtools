@@ -10,7 +10,7 @@ class AmToolsPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.4.0';
+        return '1.4.1';
     }
 
     public function getDeveloper()
@@ -36,6 +36,12 @@ class AmToolsPlugin extends BasePlugin
         if (craft()->request->isCpRequest())
         {
             craft()->amTools_imageOptim->registerEvents();
+        }
+
+        // Don't let task bash requests
+        if (craft()->request->isCpRequest() && craft()->userSession->isLoggedIn() && ! craft()->request->isAjaxRequest()) {
+            craft()->templates->includeJs('Craft.CP.taskTrackerUpdateInterval = 60000;');
+            craft()->templates->includeJs('Craft.CP.taskTrackerHudUpdateInterval = 60000;');
         }
     }
 
