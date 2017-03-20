@@ -34,7 +34,6 @@ class AmTools_ResaveElementsOfTypeTask extends BaseTask
 
         if (is_a($this->_settings['criteria'] , 'Craft\\ElementCriteriaModel')) {
             $criteria = $this->_settings['criteria'];
-            $criteria->limit = null;
             $this->_elements = $criteria->find();
         }
 
@@ -66,9 +65,11 @@ class AmTools_ResaveElementsOfTypeTask extends BaseTask
             }
             // End preserve relations
 
-            if (craft()->{$this->_settings['service']}->{$this->_settings['saveFunction']}($this->_elements[$step])) {
-                return true;
+            if (!craft()->{$this->_settings['service']}->{$this->_settings['saveFunction']}($this->_elements[$step])) {
+                AmToolsPlugin::log('Couldn\'t save ' . get_class($this->_elements[$step]) . ' with id ' . $this->_elements[$step]->id . ', title' . $this->_elements[$step]->title, LogLevel::Info, true);
             }
+
+            return true;
         }
 
         return false;
