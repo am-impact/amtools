@@ -10,7 +10,12 @@ class AmToolsPlugin extends BasePlugin
 
     public function getVersion()
     {
-        return '1.4.1';
+        return '1.4.2';
+    }
+
+    public function getSchemaVersion()
+    {
+        return '1.4.2';
     }
 
     public function getDeveloper()

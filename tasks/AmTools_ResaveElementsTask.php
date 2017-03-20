@@ -16,7 +16,9 @@ class AmTools_ResaveElementsTask extends BaseTask
     protected function defineSettings()
     {
         return array(
-            'elementTypes' => AttributeType::Mixed
+            'elementTypes' => AttributeType::Mixed,
+            'limit' => AttributeType::Number,
+            'offset' => AttributeType::Number
         );
     }
 
@@ -27,33 +29,35 @@ class AmTools_ResaveElementsTask extends BaseTask
      */
     public function getTotalSteps()
     {
+        $this->_settings = $this->getSettings();
+
         // Define the default supported element types, the keys should be the element type class names.
         // The criteria key must contain an ElementCriteriaModel,
         // The service key must the service as in craft()->entries
         // the saveFunction key must contain the function in the service above that will be called to save the element
         $this->_supportedElementTypes = array(
             ElementType::Entry => array(
-                'criteria' => craft()->elements->getCriteria(ElementType::Entry),
+                'criteria' => craft()->elements->getCriteria(ElementType::Entry)->limit($this->_settings->limit)->offset($this->_settings->offset),
                 'service' => 'entries',
                 'saveFunction' => 'saveEntry',
             ),
             ElementType::User => array(
-                'criteria' => craft()->elements->getCriteria(ElementType::User),
+                'criteria' => craft()->elements->getCriteria(ElementType::User)->limit($this->_settings->limit)->offset($this->_settings->offset),
                 'service' => 'users',
                 'saveFunction' => 'saveUser'
             ),
             ElementType::Asset => array(
-                'criteria' => craft()->elements->getCriteria(ElementType::Asset),
+                'criteria' => craft()->elements->getCriteria(ElementType::Asset)->limit($this->_settings->limit)->offset($this->_settings->offset),
                 'service' => 'assets',
                 'saveFunction' => 'storeFile'
             ),
             ElementType::MatrixBlock => array(
-                'criteria' => craft()->elements->getCriteria(ElementType::MatrixBlock),
+                'criteria' => craft()->elements->getCriteria(ElementType::MatrixBlock)->limit($this->_settings->limit)->offset($this->_settings->offset),
                 'service' => 'matrix',
                 'saveFunction' => 'saveBlock'
             ),
             'AmSocialPlatform_Group' => array(
-                'criteria' => craft()->elements->getCriteria('AmSocialPlatform_Group'),
+                'criteria' => craft()->elements->getCriteria('AmSocialPlatform_Group')->limit($this->_settings->limit)->offset($this->_settings->offset),
                 'service' => 'amSocialPlatform_groups',
                 'saveFunction' => 'saveGroup'
             )
@@ -66,8 +70,6 @@ class AmTools_ResaveElementsTask extends BaseTask
                 $this->_supportedElementTypes[$elementType] = $elementTypeSettings;
             }
         }
-
-        $this->_settings = $this->getSettings();
 
         foreach ($this->_settings->elementTypes as $elementType) {
             if (!empty($this->_supportedElementTypes[$elementType])) {
